@@ -24,4 +24,17 @@ defmodule DotmapTest do
     list = [{"a", 1}, {"b", 2}]
     assert Dotmap.expand!(list) == %{"a" => 1, "b" => 2}
   end
+
+  test "expand!/1 converts an array of tuples to a multi level map" do
+    list = [{"a", 1}, {"b", 2}, {"c.d", 3}, {"c.e", 4}]
+    assert Dotmap.expand!(list) == %{"a" => 1, "b" => 2, "c" => %{"d" => 3, "e" => 4}}
+  end
+
+  test "expand!/1 throws an error if a key is not a string" do
+    list = [{1, 1}]
+
+    assert_raise ArgumentError, "Key must be a string", fn ->
+      Dotmap.expand!(list)
+    end
+  end
 end
