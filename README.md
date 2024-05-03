@@ -2,6 +2,10 @@
 
 Dotmap allows you to convert between nested maps and flat lists using dot notation.
 
+## Status
+
+![CI Status](https://github.com/mattiebear/dotmap/actions/workflows/verify.yml/badge.svg)
+
 ## Installation
 
 Add `dotmap` to your list of dependencies in `mix.exs`:
