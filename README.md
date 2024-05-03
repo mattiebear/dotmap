@@ -1,11 +1,10 @@
 # Dotmap
 
-**TODO: Add description**
+Dotmap allows you to convert between nested maps and flat lists using dot notation.
 
 ## Installation
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `dotmap` to your list of dependencies in `mix.exs`:
+Add `dotmap` to your list of dependencies in `mix.exs`:
 
 ```elixir
 def deps do
