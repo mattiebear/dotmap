@@ -66,7 +66,7 @@ defmodule Dotmap do
       Map.put(map, key, value)
     else
       h = hd(keys)
-      t = hd(tl(keys))
+      t = tl(keys) |> hd()
 
       if Map.has_key?(map, h) do
         Map.put(map, h, place(Map.get(map, h), t, value))
