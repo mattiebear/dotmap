@@ -20,6 +20,16 @@ defmodule DotmapTest do
     end
   end
 
+  test "contract/1 returns a success tuple" do
+    map = %{"a" => 1, "b" => 2}
+    assert Dotmap.contract(map) == {:ok, [{"a", 1}, {"b", 2}]}
+  end
+
+  test "contract/1 returns an error tuple if a key is not a string" do
+    map = %{1 => 1}
+    assert Dotmap.contract(map) == {:error, "Key must be a string"}
+  end
+
   test "expand!/1 converts an array of tuples to a single level map" do
     list = [{"a", 1}, {"b", 2}]
     assert Dotmap.expand!(list) == %{"a" => 1, "b" => 2}
@@ -36,5 +46,15 @@ defmodule DotmapTest do
     assert_raise ArgumentError, "Key must be a string", fn ->
       Dotmap.expand!(list)
     end
+  end
+
+  test "expand/1 returns a success tuple" do
+    list = [{"a", 1}, {"b", 2}]
+    assert Dotmap.expand(list) == {:ok, %{"a" => 1, "b" => 2}}
+  end
+
+  test "expand/1 returns an error tuple if a key is not a string" do
+    list = [{1, 1}]
+    assert Dotmap.expand(list) == {:error, "Key must be a string"}
   end
 end

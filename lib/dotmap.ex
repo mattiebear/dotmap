@@ -4,7 +4,7 @@ defmodule Dotmap do
   """
 
   @doc """
-  Converts a map into an array of tuples.
+  Converts a map into an array of tuples. An ArgumentError is raised if a key is not a string.
 
   ## Examples
 
@@ -13,10 +13,33 @@ defmodule Dotmap do
 
       iex> Dotmap.contract!(%{"a" => 1, "b" => 2, "c" => %{"d" => 3, "e" => 4}})
       [{"a", 1}, {"b", 2}, {"c.d", 3}, {"c.e", 4}]
+
+      iex> Dotmap.contract!(%{1 => 1})
+      ** (ArgumentError) Key must be a string
   """
 
   def contract!(map) do
     do_contract(map)
+  end
+
+  @doc """
+  Converts a map into an array of tuples. Returns a tuple with the result or an error message.
+
+  ## Examples
+
+      iex> Dotmap.contract(%{"a" => 1, "b" => 2})
+      {:ok, [{"a", 1}, {"b", 2}]}
+
+      iex> Dotmap.contract(%{1 => 1})
+      {:error, "Key must be a string"}
+  """
+  def contract(map) do
+    try do
+      list = do_contract(map)
+      {:ok, list}
+    rescue
+      e -> {:error, e.message}
+    end
   end
 
   @doc """
@@ -29,6 +52,9 @@ defmodule Dotmap do
 
       iex> Dotmap.expand!([{"a", 1}, {"b", 2}, {"c.d", 3}, {"c.e", 4}])
       %{"a" => 1, "b" => 2, "c" => %{"d" => 3, "e" => 4}}
+
+      iex> Dotmap.expand!([{1, 1}])
+      ** (ArgumentError) Key must be a string
   """
   def expand!(list) do
     Enum.reduce(list, %{}, fn {k, v}, acc ->
@@ -38,6 +64,26 @@ defmodule Dotmap do
 
       place(acc, k, v)
     end)
+  end
+
+  @doc """
+  Converts an array of tuples into a map. Returns a tuple with the result or an error message.
+
+  ## Examples
+
+      iex> Dotmap.expand([{"a", 1}, {"b", 2}])
+      {:ok, %{"a" => 1, "b" => 2}}
+
+      iex> Dotmap.expand([{1, 1}])
+      {:error, "Key must be a string"}
+  """
+  def expand(list) do
+    try do
+      map = expand!(list)
+      {:ok, map}
+    rescue
+      e -> {:error, e.message}
+    end
   end
 
   defp do_contract(map, base_key \\ "") do
