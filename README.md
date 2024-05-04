@@ -33,8 +33,17 @@ Dotmap.expand!([{"a.b" => 1}])
 
 # %{"a" => %{"b" => 1}}
 ```
-
 Keys must be strings. If you attempt either function using a non-string key an `ArgumentError` will be raised.
+
+Non-raising verions of the functions also exist, which will return either `{:ok, value}` or `{:error, message}`.
+
+Use `place/3` to insert a value into a nested map.
+
+```elixir
+Dotmap.place(%{"a" => 1}, "b.c", 2)
+
+# %{"a" => 1, "b" => %{"c" => 2}}
+```
 
 ## Additional Notes
 
