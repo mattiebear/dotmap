@@ -3,6 +3,9 @@ defmodule Dotmap do
   A module for handling conversions of maps into dot notation and vice versa.
   """
 
+  @type string_map :: %{String.t() => any}
+  @type compact_list :: list({String.t(), String.t()})
+
   @doc """
   Converts a map into an array of tuples. An ArgumentError is raised if a key is not a string.
 
@@ -18,9 +21,12 @@ defmodule Dotmap do
       ** (ArgumentError) Key must be a string
   """
 
-  def contract!(map) do
+  @spec contract!(map :: string_map()) :: compact_list()
+  def contract!(map) when is_map(map) do
     do_contract(map)
   end
+
+  def contract!(_), do: raise(ArgumentError, "Argument must be a map")
 
   @doc """
   Converts a map into an array of tuples. Returns a tuple with the result or an error message.
@@ -33,7 +39,9 @@ defmodule Dotmap do
       iex> Dotmap.contract(%{1 => 1})
       {:error, "Key must be a string"}
   """
-  def contract(map) do
+
+  @spec contract(map :: string_map()) :: {:ok, compact_list()} | {:error, String.t()}
+  def contract(map) when is_map(map) do
     try do
       list = do_contract(map)
       {:ok, list}
@@ -41,6 +49,8 @@ defmodule Dotmap do
       e -> {:error, e.message}
     end
   end
+
+  def contract(_), do: raise(ArgumentError, "Argument must be a map")
 
   @doc """
   Converts an array of tuples into a map.
@@ -56,6 +66,8 @@ defmodule Dotmap do
       iex> Dotmap.expand!([{1, 1}])
       ** (ArgumentError) Key must be a string
   """
+
+  @spec expand!(list :: compact_list()) :: string_map()
   def expand!(list) do
     Enum.reduce(list, %{}, fn {k, v}, acc ->
       if !is_binary(k) do
@@ -77,6 +89,8 @@ defmodule Dotmap do
       iex> Dotmap.expand([{1, 1}])
       {:error, "Key must be a string"}
   """
+
+  @spec expand(list :: compact_list()) :: {:ok, string_map()} | {:error, String.t()}
   def expand(list) do
     try do
       map = expand!(list)
@@ -94,6 +108,8 @@ defmodule Dotmap do
       iex> Dotmap.place(%{"a" => 1}, "b.c", 2)
       %{"a" => 1, "b" => %{"c" => 2}}
   """
+
+  @spec place(map :: string_map(), key :: String.t(), value :: any()) :: string_map()
   def place(map, key, value) do
     keys = String.split(key, ".", parts: 2)
 
