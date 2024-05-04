@@ -87,12 +87,12 @@ defmodule Dotmap do
   end
 
   @doc """
-  Adds a key value pair to a map.
+  Adds a key value pair to a map. It will create any necessary nested maps if they do not exist.
 
   ## Examples
 
-      iex> Dotmap.place(%{"a" => 1}, "b", 2)
-      %{"a" => 1, "b" => 2}
+      iex> Dotmap.place(%{"a" => 1}, "b.c", 2)
+      %{"a" => 1, "b" => %{"c" => 2}}
   """
   def place(map, key, value) do
     keys = String.split(key, ".", parts: 2)
