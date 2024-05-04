@@ -57,4 +57,19 @@ defmodule DotmapTest do
     list = [{1, 1}]
     assert Dotmap.expand(list) == {:error, "Key must be a string"}
   end
+
+  test "place/3 adds a key value pair to a flat map" do
+    map = %{"a" => 1}
+    assert Dotmap.place(map, "b", 2) == %{"a" => 1, "b" => 2}
+  end
+
+  test "place/3 adds a key value pair to a nested map" do
+    map = %{"a" => 1, "b" => 2, "c" => %{"d" => 3, "e" => 4}}
+
+    assert Dotmap.place(map, "c.f", 5) == %{
+             "a" => 1,
+             "b" => 2,
+             "c" => %{"d" => 3, "e" => 4, "f" => 5}
+           }
+  end
 end

@@ -86,6 +86,31 @@ defmodule Dotmap do
     end
   end
 
+  @doc """
+  Adds a key value pair to a map.
+
+  ## Examples
+
+      iex> Dotmap.place(%{"a" => 1}, "b", 2)
+      %{"a" => 1, "b" => 2}
+  """
+  def place(map, key, value) do
+    keys = String.split(key, ".", parts: 2)
+
+    if length(keys) == 1 do
+      Map.put(map, key, value)
+    else
+      h = hd(keys)
+      t = tl(keys) |> hd()
+
+      if Map.has_key?(map, h) do
+        Map.put(map, h, place(Map.get(map, h), t, value))
+      else
+        Map.put(map, h, place(%{}, t, value))
+      end
+    end
+  end
+
   defp do_contract(map, base_key \\ "") do
     Enum.reduce(map, [], fn {k, v}, acc ->
       if !is_binary(k) do
@@ -103,22 +128,5 @@ defmodule Dotmap do
         _ -> acc ++ [{key, v}]
       end
     end)
-  end
-
-  defp place(map, key, value) do
-    keys = String.split(key, ".", parts: 2)
-
-    if length(keys) == 1 do
-      Map.put(map, key, value)
-    else
-      h = hd(keys)
-      t = tl(keys) |> hd()
-
-      if Map.has_key?(map, h) do
-        Map.put(map, h, place(Map.get(map, h), t, value))
-      else
-        Map.put(map, h, place(%{}, t, value))
-      end
-    end
   end
 end
