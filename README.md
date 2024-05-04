@@ -11,7 +11,7 @@ Add `dotmap` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:dotmap, "~> 0.1.0"}
+    {:dotmap, "~> 0.1.1"}
   ]
 end
 ```
